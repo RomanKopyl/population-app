@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "Attach to packager",
+            "request": "attach",
+            "type": "reactnative",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug iOS (iPhone SE (3st generation))",
+            "cwd": "${workspaceFolder}",
+            "type": "reactnative",
+            "request": "launch",
+            "platform": "ios",
+            "runArguments": [
+                "--simulator",
+                "iPhone SE (3st generation) (16.4)"
+            ]
+        },
+    ]
+}

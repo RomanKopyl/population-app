@@ -1,0 +1,1 @@
+export const SELECTED_STATE = 'SELECTED_STATE';
