@@ -41,10 +41,7 @@ export const FavoriteListView: React.FC<FavoriteList> = props => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => {
-                    // dispatch(setSelectedState(item.item));
-                    onSelected?.(item.item);
-                  }}>
+                  onPress={() => onSelected?.(item.item)}>
                   <Text>Set current</Text>
                 </TouchableOpacity>
               </View>

@@ -1,9 +1,4 @@
-import {
-  AnyAction,
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import {AnyAction, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {RootState} from '.';
 import {loadPopulation} from '../api';
 import {FAVORITE_STATE_LIST, SELECTED_STATE} from '../constants';
@@ -31,8 +26,17 @@ export const setSelectedState = createAsyncThunk<
   string,
   {rejectValue: string}
 >('population/setSelectedState', async value => {
-  await storeData(SELECTED_STATE, value);
-  return value;
+  try {
+    await storeData(SELECTED_STATE, value);
+    return value;
+  } catch (error) {
+    console.log(error);
+    if (typeof error === 'string') {
+      return error;
+    }
+
+    return 'Something went wrong';
+  }
 });
 
 function isError(action: AnyAction) {
@@ -42,7 +46,7 @@ function isError(action: AnyAction) {
 interface PopulationStore {
   value: number;
   isLoading: boolean;
-  error: unknown;
+  error?: string;
   list: PopulationType[];
   selectedState?: string;
   favoriteStateList?: string[];
@@ -57,7 +61,7 @@ const initState: PopulationStore = {
   favoriteStateList: undefined,
 };
 
-export const counterSlice = createSlice({
+export const populationSlice = createSlice({
   name: 'population',
   initialState: initState,
   reducers: {
@@ -65,6 +69,9 @@ export const counterSlice = createSlice({
       state.favoriteStateList = action.payload;
     },
     addFavorite: (state, action) => {
+      if (!action.payload) {
+        return;
+      }
       let newList;
       if (!state.favoriteStateList || state.favoriteStateList.length === 0) {
         newList = [action.payload];
@@ -93,7 +100,7 @@ export const counterSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchPopulation.pending, state => {
       state.isLoading = true;
-      state.error = null;
+      state.error = undefined;
     });
     builder.addCase(fetchPopulation.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -103,15 +110,16 @@ export const counterSlice = createSlice({
       state.isLoading = false;
       state.selectedState = action.payload;
     });
-    builder.addMatcher(isError, (state, action: PayloadAction<string>) => {
+    builder.addMatcher(isError, (state, action) => {
       state.isLoading = false;
-      state.error = action.payload;
+      state.error = action.error.message;
     });
   },
 });
 
-export const {initFavorite, addFavorite, removeFavorite} = counterSlice.actions;
+export const {initFavorite, addFavorite, removeFavorite} =
+  populationSlice.actions;
 
 export const selectCount = (state: RootState) => state.population.value;
 
-export default counterSlice.reducer;
+export default populationSlice.reducer;

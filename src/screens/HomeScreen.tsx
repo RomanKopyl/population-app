@@ -1,6 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  Modal,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -38,6 +41,7 @@ export const HomeScreen: React.FC = ({navigation}) => {
     };
   });
   const [showPreviews, setShowPreviews] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch = useAppDispatch();
   const list = useAppSelector((state: RootState) => state.population.list);
@@ -50,6 +54,7 @@ export const HomeScreen: React.FC = ({navigation}) => {
   const isLoading = useAppSelector(
     (state: RootState) => state.population.isLoading
   );
+  const error = useAppSelector((state: RootState) => state.population.error);
   const isIncludes = selectedState
     ? favoriteStateList?.includes(selectedState)
     : false;
@@ -65,6 +70,13 @@ export const HomeScreen: React.FC = ({navigation}) => {
   const currentState = useMemo(() => {
     return data.find(item => item.label === selectedState);
   }, [data, selectedState]);
+
+  // ---- UseEffects ----
+  useEffect(() => {
+    if (typeof error === 'string') {
+      setModalVisible(error !== undefined);
+    }
+  }, [error]);
 
   useEffect(() => {
     // Load from server
@@ -93,6 +105,7 @@ export const HomeScreen: React.FC = ({navigation}) => {
     });
   }, [currentState?.label, data, dispatch, selectedState]);
 
+  // ---- Callbacks ----
   const onSelected = (label: string) => {
     const duration = 1500;
 
@@ -116,11 +129,18 @@ export const HomeScreen: React.FC = ({navigation}) => {
     dispatch(addFavorite(selectedState));
   }, [dispatch, selectedState]);
 
+  // ---- render ----
   return (
     <SafeAreaView>
       {/* Screen header */}
-
       <Header title="Population in USA" showBackButton={false} />
+
+      {/* Error */}
+      {error && (
+        <View>
+          <Text>{error}</Text>
+        </View>
+      )}
 
       {/* Select by state */}
       <DropdownSelector
@@ -171,6 +191,27 @@ export const HomeScreen: React.FC = ({navigation}) => {
       {favoriteStateList && favoriteStateList.length > 0 && (
         <FavoriteListView list={favoriteStateList} onSelected={onSelected} />
       )}
+
+      {/* Error modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{error}</Text>
+            <Pressable
+              style={styles.buttonClose}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.modalTextStyle}>Hide Modal</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -213,5 +254,42 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize: 32,
+  },
+  // Modal styles
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  buttonClose: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: '#2196F3',
+  },
+  modalTextStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
