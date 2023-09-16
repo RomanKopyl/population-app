@@ -37,10 +37,8 @@ export const ChartView: React.FC = () => {
     <View>
       <BarChart
         data={data}
-        width={screenWidth - 100}
+        width={screenWidth - 120}
         showVerticalLines
-        noOfVerticalLines={7}
-        verticalLinesSpacing={40}
         yAxisTextStyle={styles.textStyle}
         yAxisLabelWidth={90}
       />

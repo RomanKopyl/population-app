@@ -92,18 +92,22 @@ export const HomeScreen: React.FC = ({navigation}) => {
       return;
     }
 
-    // Get saved state from locale storage
-    retrieveData(SELECTED_STATE).then(result => {
-      // Save to redux
-      dispatch(setSelectedState(result ?? ''));
-    });
+    // Get saved states from locale storage
     retrieveArray(FAVORITE_STATE_LIST).then(result => {
       if (result) {
         // Save to redux
         dispatch(initFavorite(result));
       }
     });
-  }, [currentState?.label, data, dispatch, selectedState]);
+    retrieveData(SELECTED_STATE).then(result => {
+      const newState = result ?? list?.[0].State;
+      if (!newState) {
+        return;
+      }
+      // Save to redux
+      dispatch(setSelectedState(newState));
+    });
+  }, [currentState?.label, data, dispatch, list, selectedState]);
 
   // ---- Callbacks ----
   const onSelected = (label: string) => {
@@ -134,13 +138,6 @@ export const HomeScreen: React.FC = ({navigation}) => {
     <SafeAreaView>
       {/* Screen header */}
       <Header title="Population in USA" showBackButton={false} />
-
-      {/* Error */}
-      {error && (
-        <View>
-          <Text>{error}</Text>
-        </View>
-      )}
 
       {/* Select by state */}
       <DropdownSelector
