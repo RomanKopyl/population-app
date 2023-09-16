@@ -24,8 +24,7 @@ export const ChartView: React.FC = () => {
         return {
           value: item.Population,
           label: item.Year,
-          frontColor: '#006DFF',
-          gradientColor: '#009FFF',
+          frontColor: '#F7CF3D',
           spacing: 6,
         } as unknown as itemType;
       })

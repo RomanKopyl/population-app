@@ -17,21 +17,24 @@ export const filterByState = (value: string, list: PopulationType[]) => {
 };
 
 export const storeData = async (key: string, value?: string) => {
-  try {
-    await AsyncStorage.setItem(key, value ?? key);
-  } catch (error) {
-    // Error saving data TODO:
-  }
+  await AsyncStorage.setItem(key, value ?? key);
+};
+
+export const storeArray = async (key: string, list: string[]) => {
+  await AsyncStorage.setItem(key, JSON.stringify(list));
 };
 
 export const retrieveData = async (key: string) => {
-  try {
-    const value = await AsyncStorage.getItem(key);
-    if (value !== null) {
-      console.log(value);
-      return value;
-    }
-  } catch (error) {
-    // Error retrieving data TODO:
+  const value = await AsyncStorage.getItem(key);
+  if (value !== null) {
+    console.log(value);
+    return value;
+  }
+};
+
+export const retrieveArray = async (key: string) => {
+  const value = await AsyncStorage.getItem(key);
+  if (value !== null) {
+    return JSON.parse(value);
   }
 };

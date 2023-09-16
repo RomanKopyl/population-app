@@ -18,7 +18,6 @@ const DropdownSelector: React.FC<Props> = props => {
   const {data, state, onSelected} = props;
 
   const [isFocus, setIsFocus] = useState(false);
-  // const dispatch = useAppDispatch();
 
   const renderLabel = () => {
     if (state?.value || isFocus) {

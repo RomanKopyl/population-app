@@ -6,8 +6,8 @@ import {
 } from '@reduxjs/toolkit';
 import {RootState} from '.';
 import {loadPopulation} from '../api';
-import {SELECTED_STATE} from '../constants';
-import {storeData} from '../helper';
+import {FAVORITE_STATE_LIST, SELECTED_STATE} from '../constants';
+import {storeArray, storeData} from '../helper';
 
 export type PopulationType = {
   'ID State': string;
@@ -45,6 +45,7 @@ interface PopulationStore {
   error: unknown;
   list: PopulationType[];
   selectedState?: string;
+  favoriteStateList?: string[];
 }
 
 const initState: PopulationStore = {
@@ -53,20 +54,40 @@ const initState: PopulationStore = {
   error: undefined,
   list: [],
   selectedState: undefined,
+  favoriteStateList: undefined,
 };
 
 export const counterSlice = createSlice({
   name: 'population',
   initialState: initState,
   reducers: {
-    increment: state => {
-      state.value += 1;
+    initFavorite: (state, action) => {
+      state.favoriteStateList = action.payload;
     },
-    decrement: state => {
-      state.value -= 1;
+    addFavorite: (state, action) => {
+      let newList;
+      if (!state.favoriteStateList || state.favoriteStateList.length === 0) {
+        newList = [action.payload];
+      } else if (
+        state.favoriteStateList.find(item => item !== action.payload)
+      ) {
+        newList = [...state.favoriteStateList, action.payload];
+      }
+
+      if (!newList) {
+        return;
+      }
+
+      state.favoriteStateList = newList;
+      storeArray(FAVORITE_STATE_LIST, newList);
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    removeFavorite: (state, action) => {
+      const newList = state.favoriteStateList?.filter(
+        item => item !== action.payload
+      );
+
+      state.favoriteStateList = newList;
+      storeArray(FAVORITE_STATE_LIST, newList ?? []);
     },
   },
   extraReducers: builder => {
@@ -89,7 +110,7 @@ export const counterSlice = createSlice({
   },
 });
 
-export const {increment, decrement, incrementByAmount} = counterSlice.actions;
+export const {initFavorite, addFavorite, removeFavorite} = counterSlice.actions;
 
 export const selectCount = (state: RootState) => state.population.value;
 

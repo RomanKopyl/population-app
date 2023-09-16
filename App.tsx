@@ -1,10 +1,10 @@
-import {HomeScreen} from './src/screens/HomeScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {Provider} from 'react-redux';
-import {store} from './src/store';
-import {NavigationContainer} from '@react-navigation/native';
 import {DetailsScreen} from './src/screens/DetailsScreen';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {HomeScreen} from './src/screens/HomeScreen';
+import {store} from './src/store';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,8 +13,16 @@ function App(): JSX.Element {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Details" component={DetailsScreen} />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Details"
+            component={DetailsScreen}
+            options={{headerShown: false}}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

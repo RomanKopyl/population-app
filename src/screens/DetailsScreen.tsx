@@ -1,6 +1,7 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import {ChartView} from '../components/ChartView';
+import {Header} from '../components/Header';
 import {RootState} from '../store';
 import {useAppSelector} from '../store/hooks';
 
@@ -11,17 +12,8 @@ export const DetailsScreen: React.FC = () => {
 
   return (
     <SafeAreaView>
-      <Text style={styles.header}>{selectedState}</Text>
+      <Header title={selectedState} />
       <ChartView />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-});
